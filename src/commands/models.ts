@@ -5,6 +5,11 @@ export {
   modelsAliasesRemoveCommand,
 } from "./models/aliases.js";
 export {
+  modelsImageAliasesAddCommand,
+  modelsImageAliasesListCommand,
+  modelsImageAliasesRemoveCommand,
+} from "./models/image-aliases.js";
+export {
   modelsAuthAddCommand,
   modelsAuthLoginCommand,
   modelsAuthPasteTokenCommand,

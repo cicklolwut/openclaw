@@ -14,6 +14,9 @@ import {
   modelsFallbacksClearCommand,
   modelsFallbacksListCommand,
   modelsFallbacksRemoveCommand,
+  modelsImageAliasesAddCommand,
+  modelsImageAliasesListCommand,
+  modelsImageAliasesRemoveCommand,
   modelsImageFallbacksAddCommand,
   modelsImageFallbacksClearCommand,
   modelsImageFallbacksListCommand,
@@ -164,6 +167,42 @@ export function registerModelsCli(program: Command) {
     .action(async (alias: string) => {
       await runModelsCommand(async () => {
         await modelsAliasesRemoveCommand(alias, defaultRuntime);
+      });
+    });
+
+  const imageAliases = models
+    .command("image-aliases")
+    .description("Manage image generation model aliases");
+
+  imageAliases
+    .command("list")
+    .description("List image generation aliases")
+    .option("--json", "Output JSON", false)
+    .option("--plain", "Plain output", false)
+    .action(async (opts) => {
+      await runModelsCommand(async () => {
+        await modelsImageAliasesListCommand(opts, defaultRuntime);
+      });
+    });
+
+  imageAliases
+    .command("add")
+    .description("Add or update an image generation alias")
+    .argument("<alias>", "Alias name")
+    .argument("<model>", "Image generation model (provider/model format)")
+    .action(async (alias: string, model: string) => {
+      await runModelsCommand(async () => {
+        await modelsImageAliasesAddCommand(alias, model, defaultRuntime);
+      });
+    });
+
+  imageAliases
+    .command("remove")
+    .description("Remove an image generation alias")
+    .argument("<alias>", "Alias name")
+    .action(async (alias: string) => {
+      await runModelsCommand(async () => {
+        await modelsImageAliasesRemoveCommand(alias, defaultRuntime);
       });
     });
 

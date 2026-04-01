@@ -1,6 +1,11 @@
 import { Type } from "@sinclair/typebox";
 import type { OpenClawConfig } from "../../config/config.js";
 import { loadConfig } from "../../config/config.js";
+import { loadSessionStore, resolveStorePath } from "../../config/sessions.js";
+import {
+  buildImageGenerationModelAliasIndex,
+  resolveImageGenerationModelRef,
+} from "../../image-generation/model-alias.js";
 import { parseImageGenerationModelRef } from "../../image-generation/model-ref.js";
 import {
   generateImage,
@@ -242,8 +247,18 @@ function resolveSelectedImageGenerationProvider(params: {
   imageGenerationModelConfig: ToolModelConfig;
   modelOverride?: string;
 }): ImageGenerationProvider | undefined {
+  // Try alias resolution for the override (handles bare names like "wai" → "comfyui/wai")
+  let resolvedOverride = params.modelOverride;
+  if (resolvedOverride && !resolvedOverride.includes("/") && params.config) {
+    const aliasIndex = buildImageGenerationModelAliasIndex(params.config);
+    const aliasMatch = resolveImageGenerationModelRef(resolvedOverride, aliasIndex);
+    if (aliasMatch) {
+      resolvedOverride = `${aliasMatch.provider}/${aliasMatch.model}`;
+    }
+  }
+
   const selectedRef =
-    parseImageGenerationModelRef(params.modelOverride) ??
+    parseImageGenerationModelRef(resolvedOverride) ??
     parseImageGenerationModelRef(params.imageGenerationModelConfig.primary);
   if (!selectedRef) {
     return undefined;
@@ -470,6 +485,8 @@ export function createImageGenerateTool(options?: {
   workspaceDir?: string;
   sandbox?: ImageGenerateSandboxConfig;
   fsPolicy?: ToolFsPolicy;
+  agentSessionKey?: string;
+  sessionStorePath?: string;
 }): AnyAgentTool | null {
   const cfg = options?.config ?? loadConfig();
   const imageGenerationModelConfig = resolveImageGenerationModelConfigForTool({
@@ -567,10 +584,24 @@ export function createImageGenerateTool(options?: {
           : inputImages.length > 0
             ? await inferResolutionFromInputImages(inputImages)
             : undefined);
+      // Read session-level image model override (before provider resolution)
+      let effectiveModelOverride = model; // model from tool args takes priority
+      if (!effectiveModelOverride && options?.agentSessionKey) {
+        const storePath =
+          options?.sessionStorePath ?? resolveStorePath(effectiveCfg?.session?.store);
+        const store = loadSessionStore(storePath);
+        const entry = store[options.agentSessionKey];
+        if (entry?.imageModel) {
+          const imageProvider = entry.imageModelProvider?.trim();
+          const imageModel = entry.imageModel.trim();
+          effectiveModelOverride = imageProvider ? `${imageProvider}/${imageModel}` : imageModel;
+        }
+      }
+
       const selectedProvider = resolveSelectedImageGenerationProvider({
         config: effectiveCfg,
         imageGenerationModelConfig,
-        modelOverride: model,
+        modelOverride: effectiveModelOverride,
       });
       validateImageGenerationCapabilities({
         provider: selectedProvider,
@@ -585,7 +616,7 @@ export function createImageGenerateTool(options?: {
         cfg: effectiveCfg,
         prompt,
         agentDir: options?.agentDir,
-        modelOverride: model,
+        modelOverride: effectiveModelOverride,
         size,
         aspectRatio,
         resolution,

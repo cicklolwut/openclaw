@@ -37,6 +37,16 @@ export const AgentDefaultsSchema = z
       )
       .optional(),
     workspace: z.string().optional(),
+    imageGenerationModels: z
+      .record(
+        z.string(),
+        z
+          .object({
+            alias: z.string().optional(),
+          })
+          .strict(),
+      )
+      .optional(),
     repoRoot: z.string().optional(),
     skipBootstrap: z.boolean().optional(),
     bootstrapMaxChars: z.number().int().positive().optional(),

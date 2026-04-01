@@ -95,6 +95,8 @@ type PersistSessionEntryParams = {
 type OverrideFieldClearedByDelete =
   | "providerOverride"
   | "modelOverride"
+  | "imageModel"
+  | "imageModelProvider"
   | "authProfileOverride"
   | "authProfileOverrideSource"
   | "authProfileOverrideCompactionCount"
@@ -106,6 +108,8 @@ type OverrideFieldClearedByDelete =
 const OVERRIDE_FIELDS_CLEARED_BY_DELETE: OverrideFieldClearedByDelete[] = [
   "providerOverride",
   "modelOverride",
+  "imageModel",
+  "imageModelProvider",
   "authProfileOverride",
   "authProfileOverrideSource",
   "authProfileOverrideCompactionCount",

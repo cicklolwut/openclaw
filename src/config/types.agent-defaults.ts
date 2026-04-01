@@ -16,6 +16,11 @@ export type AgentModelEntryConfig = {
   streaming?: boolean;
 };
 
+export type ImageGenerationModelEntryConfig = {
+  /** Short alias for this image generation model (e.g., "wai" for "comfyui/wai"). */
+  alias?: string;
+};
+
 export type AgentModelListConfig = {
   primary?: string;
   fallbacks?: string[];
@@ -132,6 +137,8 @@ export type AgentDefaultsConfig = {
   pdfMaxPages?: number;
   /** Model catalog with optional aliases (full provider/model keys). */
   models?: Record<string, AgentModelEntryConfig>;
+  /** Image generation model catalog with optional aliases (full provider/model keys). */
+  imageGenerationModels?: Record<string, ImageGenerationModelEntryConfig>;
   /** Agent working directory (preferred). Used as the default cwd for agent runs. */
   workspace?: string;
   /** Optional repository root for system prompt runtime line (overrides auto-detect). */

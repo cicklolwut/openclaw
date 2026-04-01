@@ -42,6 +42,7 @@ function getBuiltinSlashCommands(): Set<string> {
     "elevated",
     "exec",
     "model",
+    "image-model",
     "status",
     "queue",
   ]);

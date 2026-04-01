@@ -129,6 +129,8 @@ export type SessionEntry = {
   responseUsage?: "on" | "off" | "tokens" | "full";
   providerOverride?: string;
   modelOverride?: string;
+  imageModel?: string;
+  imageModelProvider?: string;
   authProfileOverride?: string;
   authProfileOverrideSource?: "auto" | "user";
   authProfileOverrideCompactionCount?: number;

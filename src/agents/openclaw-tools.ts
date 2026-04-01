@@ -1,4 +1,5 @@
 import type { OpenClawConfig } from "../config/config.js";
+import { resolveStorePath } from "../config/sessions/paths.js";
 import { callGateway } from "../gateway/call.js";
 import { resolvePluginTools } from "../plugins/tools.js";
 import {
@@ -144,6 +145,8 @@ export function createOpenClawTools(
     workspaceDir,
     sandbox,
     fsPolicy: options?.fsPolicy,
+    agentSessionKey: options?.agentSessionKey,
+    sessionStorePath: resolveStorePath(resolvedConfig?.session?.store, { agentId: sessionAgentId }),
   });
   const pdfTool = options?.agentDir?.trim()
     ? createPdfTool({

@@ -753,6 +753,20 @@ export function buildBuiltinChatCommands(): ChatCommandDefinition[] {
       ],
     }),
     defineChatCommand({
+      key: "image-model",
+      nativeName: "image-model",
+      description: "Show or set the image generation model.",
+      textAlias: "/image-model",
+      category: "options",
+      args: [
+        {
+          name: "model",
+          description: "Model id (provider/model, alias, or 'default'/'reset')",
+          type: "string",
+        },
+      ],
+    }),
+    defineChatCommand({
       key: "models",
       nativeName: "models",
       description: "List model providers or provider models.",

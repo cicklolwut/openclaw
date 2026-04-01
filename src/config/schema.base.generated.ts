@@ -1488,6 +1488,21 @@ export const GENERATED_BASE_CONFIG_SCHEMA = {
               workspace: {
                 type: "string",
               },
+              imageGenerationModels: {
+                type: "object",
+                propertyNames: {
+                  type: "string",
+                },
+                additionalProperties: {
+                  type: "object",
+                  properties: {
+                    alias: {
+                      type: "string",
+                    },
+                  },
+                  additionalProperties: false,
+                },
+              },
               repoRoot: {
                 type: "string",
               },
